@@ -108,6 +108,17 @@ body {
     height: 38px;
   }
   
+
+  .img-products 
+  {
+    width: 100px;
+  }
+
+  td
+  {
+    vertical-align: middle !important;
+  }
+
   
   
   
