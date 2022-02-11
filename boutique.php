@@ -1,4 +1,34 @@
 <?php 
+require_once('inc/init.inc.php');
+
+if(isset($_GET['cat']) && ! empty($_GET['cat']))
+{
+    $prodPdoS = $bdd->prepare("SELECT * FROM produit WHERE categorie = :categorie");
+    $prodPdoS->bindValue(':categorie', $_GET['cat'], PDO::PARAM_STR);
+   $prodPdoS->execute();
+
+
+if($prodPdoS->rowCount() > 0)
+{
+    $products = $prodPdoS->fetchAll(PDO::FETCH_ASSOC);
+    // echo '<pre>'; print_r($products);  echo '</pre>';
+}
+else
+{
+    header('location: boutique.php');
+}
+
+} 
+
+else
+{
+    $prodPdoS = $bdd->query ("SELECT * FROM produit");
+    $products = $prodPdoS->fetchAll(PDO::FETCH_ASSOC);
+    // echo '<pre>'; print_r($products);  echo '</pre>';
+}
+
+
+
 require_once('inc/inc_front/header.inc.php');
 require_once('inc/inc_front/nav.inc.php');
 ?>
@@ -14,83 +44,59 @@ require_once('inc/inc_front/nav.inc.php');
                 Catégories
                 </button>
             </h2>
+
+            <?php
+            $catPdoS = $bdd->query("SELECT DISTINCT(categorie) FROM produit");
+            ?>
+
             <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                 <div class="accordion-body">
-                    <p><a href="" class="alert-link text-dark">Tee-shirt</a></p>
-                    <p><a href="" class="alert-link text-dark">Pull</a></p>
-                    <p><a href="" class="alert-link text-dark">Manteaux</a></p>
+                    <?php while($arrayCat = $catPdoS->fetch(PDO::FETCH_ASSOC)): 
+                            // echo '<pre>'; print_r($arrayCat);  echo '</pre>';
+                        ?>
+                    <p><a href="?cat=<?= $arrayCat ['categorie'] ?>" class="alert-link text-dark"><?= $arrayCat ['categorie'] ?></a></p>
+                    <?php endwhile; ?>
+
                 </div>
             </div>
         </div>
     </div>
 
     <div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
+
+    <?php foreach($products as $key => $tabProducts): ?>
+
         <div class="col">
             <div class="card shadow-sm rounded">
-                <a href="fiche_produit.html"><img src="assets/img/tee-shirt1.jpg" class="card-img-top" alt="..."></a>
+                <a href="fiche_produit.php?id_produit=<?= $tabProducts['id_produit'] ?>"><img src="<?= $tabProducts['photo'] ?>" class="card-img-top" alt="..."></a>
                 <div class="card-body">
-                    <h5 class="card-title text-center"><a href="fiche_produit.html" class="alert-link text-dark titre-produit-boutique">Tee-shirt 1</a></h5>
-                    <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga laborum a quibusdam ratione voluptatem culpa. Quidem, obcaecati. Beatae, et molestiae?</p>
-                    <p class="card-text fw-bold">9.99€</p>
-                    <p class="card-text text-center"><a href="fiche_produit.html" class="btn btn-outline-dark">En savoir plus</a></p>
+                    
+                    <h5 class="card-title text-center"><a href="fiche_produit.php?id_produit=<?=$tabProducts['id_produit'] ?>" class="alert-link text-dark titre-produit-boutique"><?= $tabProducts['titre'] ?></a></h5>
+
+                    <p class="card-text">
+                    <?php 
+
+                   if (iconv_strlen($tabProducts['description']) > 200)
+                   {
+                       echo substr($tabProducts['description'], 0, 200) . '[...]';
+                   }
+                   else
+                   {
+                       echo $tabProducts['description'];
+                   }
+                
+                ?>
+                
+                </p>
+
+                    <p class="card-text fw-bold"><?= $tabProducts['prix'] ?>€</p>
+
+                    <p class="card-text text-center"><a href="fiche_produit.php?id_produit=<?=$tabProducts['id_produit'] ?>" class="btn btn-outline-dark">En savoir plus</a></p>
                 </div>
             </div>
         </div>
-        <div class="col">
-            <div class="card shadow-sm rounded">
-                <a href="fiche_produit.html"><img src="assets/img/tee-shirt2.jpg" class="card-img-top" alt="..."></a>
-                <div class="card-body">
-                    <h5 class="card-title text-center"><a href="fiche_produit.html" class="alert-link text-dark titre-produit-boutique">Tee-shirt 2</a></h5>
-                    <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga laborum a quibusdam ratione voluptatem culpa. Quidem, obcaecati. Beatae, et molestiae?</p>
-                    <p class="card-text fw-bold">10€</p>
-                    <p class="card-text text-center"><a href="fiche_produit.html" class="btn btn-outline-dark">En savoir plus</a></p>
-                </div>
-            </div>
-        </div>
-        <div class="col">
-            <div class="card shadow-sm rounded">
-                <a href="fiche_produit.html"><img src="assets/img/tee-shirt3.jpg" class="card-img-top" alt="..."></a>
-                <div class="card-body">
-                    <h5 class="card-title text-center"><a href="fiche_produit.html" class="alert-link text-dark titre-produit-boutique">Tee-shirt 3</a></h5>
-                    <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga laborum a quibusdam ratione voluptatem culpa. Quidem, obcaecati. Beatae, et molestiae?</p>
-                    <p class="card-text fw-bold">19.99€</p>
-                    <p class="card-text text-center"><a href="fiche_produit.html" class="btn btn-outline-dark">En savoir plus</a></p>
-                </div>
-            </div>
-        </div>
-        <div class="col">
-            <div class="card shadow-sm rounded">
-                <a href="fiche_produit.html"><img src="assets/img/tee-shirt4.jpg" class="card-img-top" alt="..."></a>
-                <div class="card-body">
-                    <h5 class="card-title text-center"><a href="fiche_produit.html" class="alert-link text-dark titre-produit-boutique">Tee-shirt 4</a></h5>
-                    <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga laborum a quibusdam ratione voluptatem culpa. Quidem, obcaecati. Beatae, et molestiae?</p>
-                    <p class="card-text fw-bold">20€</p>
-                    <p class="card-text text-center"><a href="fiche_produit.html" class="btn btn-outline-dark">En savoir plus</a></p>
-                </div>
-            </div>
-        </div>
-        <div class="col">
-            <div class="card shadow-sm rounded">
-                <a href="fiche_produit.html"><img src="assets/img/tee-shirt5.png" class="card-img-top" alt="..."></a>
-                <div class="card-body">
-                    <h5 class="card-title text-center"><a href="fiche_produit.html" class="alert-link text-dark titre-produit-boutique">Tee-shirt 5</a></h5>
-                    <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga laborum a quibusdam ratione voluptatem culpa. Quidem, obcaecati. Beatae, et molestiae?</p>
-                    <p class="card-text fw-bold">15€</p>
-                    <p class="card-text text-center"><a href="fiche_produit.html" class="btn btn-outline-dark">En savoir plus</a></p>
-                </div>
-            </div>
-        </div>
-        <div class="col">
-            <div class="card shadow-sm rounded">
-                <a href="fiche_produit.html"><img src="assets/img/tee-shirt6.jpg" class="card-img-top" alt="..."></a>
-                <div class="card-body">
-                    <h5 class="card-title text-center"><a href="fiche_produit.html" class="alert-link text-dark titre-produit-boutique">Tee-shirt 6</a></h5>
-                    <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga laborum a quibusdam ratione voluptatem culpa. Quidem, obcaecati. Beatae, et molestiae?</p>
-                    <p class="card-text fw-bold">30€</p>
-                    <p class="card-text text-center"><a href="fiche_produit.html" class="btn btn-outline-dark">En savoir plus</a></p>
-                </div>
-            </div>
-        </div>
+     <?php   endforeach; ?>
+
     </div>
 
 <?php 

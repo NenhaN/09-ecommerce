@@ -20,7 +20,7 @@
                 </div>
             </div>
             <div class="d-flex align-items-end div-footer-copyright">
-                <p class="text-center zone-copyright py-3 mb-0">&copy; 2021 | Grégory LACROIX</p>
+                <p class="text-center zone-copyright py-3 mb-0">&copy; 2021 | Hannane Nedloussi</p>
             </div>
         </footer>
 
